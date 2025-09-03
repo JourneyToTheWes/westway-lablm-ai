@@ -2,17 +2,10 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import ChatWindow from "@/components/ChatWIndow";
-import ChatInput from "@/components/ChatInput";
+import ChatWindow from "@/components/ChatWindow";
 
 const ChatPage = () => {
     const [chatId, setChatId] = useState<string | null>(null);
-
-    function handleSend(text: string) {
-        if (!chatId) return;
-        // TODO: call POST /api/chats/[id]/messages (mock for now)
-        console.log("Send:", text, "to chat:", chatId);
-    }
 
     return (
         <div className="flex h-screen">

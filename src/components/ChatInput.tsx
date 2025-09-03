@@ -32,7 +32,7 @@ export default function ChatInput({
             />
             <button
                 type="submit"
-                className="ml-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+                className="ml-2 px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 cursor-pointer disabled:cursor-default disabled:hover:bg-blue-600"
                 disabled={disabled}
             >
                 Send
