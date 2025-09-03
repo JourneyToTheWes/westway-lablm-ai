@@ -32,13 +32,17 @@ export async function fetchProject(
 }
 
 export async function fetchInstruments(
-    projectId: string
+    projectId?: string
 ): Promise<Instrument[]> {
-    return safeFetch<Instrument[]>(`/api/projects/${projectId}/instruments`);
+    const url = projectId
+        ? `/api/projects/${projectId}/instruments`
+        : `/api/instruments`;
+    return safeFetch<Instrument[]>(url);
 }
 
-export async function fetchDocs(projectId: string): Promise<Doc[]> {
-    return safeFetch<Doc[]>(`/api/projects/${projectId}/docs`);
+export async function fetchDocs(projectId?: string): Promise<Doc[]> {
+    const url = projectId ? `/api/projects/${projectId}/docs` : `/api/docs`;
+    return safeFetch<Doc[]>(url);
 }
 
 export async function fetchChats(): Promise<Chat[]> {
@@ -47,4 +51,33 @@ export async function fetchChats(): Promise<Chat[]> {
 
 export async function fetchMessages(chatId: string): Promise<Message[]> {
     return safeFetch<Message[]>(`/api/chats/${chatId}/messages`);
+}
+
+/**
+ * Uploads files for a project.
+ * Returns the new Doc objects created.
+ */
+export async function uploadFiles(
+    projectId: string,
+    files: File[]
+): Promise<Doc[]> {
+    try {
+        const formData = new FormData();
+        files.forEach((file) => formData.append("files", file));
+
+        const res = await fetch(`/api/projects/${projectId}/files`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!res.ok) {
+            throw new Error(`Failed to upload files: ${res.statusText}`);
+        }
+
+        const data: Doc[] = await res.json();
+        return data;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 }

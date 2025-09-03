@@ -6,18 +6,20 @@ export interface Project {
 
 export interface Instrument {
     id: string;
-    projectId: string;
+    projectIds: string[];
     name: string;
     model: string;
 }
 
 export interface Doc {
     id: string;
-    instrumentId: string;
+    projectId: string; // Is associated with a project
+    instrumentIds?: string[]; // optional, empty if general project doc
     title: string;
     type: "pdf" | "docx" | "pptx" | "txt";
     path: string; // file path or mock URL
     pageCount?: number;
+    content?: string; // parsed text for AI semantic search
 }
 
 export interface Chat {

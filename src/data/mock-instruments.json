@@ -1,14 +1,20 @@
 [
     {
         "id": "i1",
-        "projectId": "p1",
+        "projectIds": ["p1"],
         "name": "Protein Analyzer 3000",
         "model": "PA-3000"
     },
     {
         "id": "i2",
-        "projectId": "p2",
+        "projectIds": ["p1", "p2"],
         "name": "NanoScope Microscope",
         "model": "NS-500"
+    },
+    {
+        "id": "i3",
+        "projectIds": [],
+        "name": "General Lab Instrument",
+        "model": "GLI-100"
     }
 ]
