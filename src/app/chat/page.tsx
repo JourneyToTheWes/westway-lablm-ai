@@ -19,10 +19,7 @@ const ChatPage = () => {
             <Sidebar onSelectChat={setChatId} />
             <div className="flex flex-col flex-1">
                 {chatId ? (
-                    <>
-                        <ChatWindow chatId={chatId} />
-                        <ChatInput onSend={handleSend} />
-                    </>
+                    <ChatWindow chatId={chatId} />
                 ) : (
                     <div className="flex-1 flex items-center justify-center text-gray-500">
                         Select a chat to get started
