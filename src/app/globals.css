@@ -17,8 +17,41 @@
         --background: #0a0a0a;
         --foreground: #ededed;
     }
+
+    /* Firefox */
+    .scrollbar-custom {
+        scrollbar-color: #4b5563 transparent;
+    }
+
+    /* Webkit browsers */
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+        background-color: #4b5563;
+    }
+    .scrollbar-custom::-webkit-scrollbar-track {
+        background-color: #1f2937;
+    }
 }
 
 body {
     @apply bg-[var(--background)] text-[var(--foreground)] font-sans;
+}
+
+.scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: #9ca3af transparent;
+}
+
+/* Webkit browsers */
+.scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: #9ca3af; /* light gray */
+    border-radius: 3px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background-color: transparent; /* hide the track */
 }

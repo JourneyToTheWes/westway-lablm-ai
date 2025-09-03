@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import useChatMessages from "@/hooks/useChatMessages";
 import ChatInput from "./ChatInput";
@@ -8,6 +8,7 @@ import ChatInput from "./ChatInput";
 const ChatWindow = ({ chatId }: { chatId: string }) => {
     const { messages, sendMessage, status } = useChatMessages(chatId);
     const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const handleSend = async (text: string) => {
         setLoading(true);
@@ -15,10 +16,15 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
         setLoading(false);
     };
 
+    // Auto-scroll when messages or status changes
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages, status]);
+
     return (
         <div className="flex flex-col h-full">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-custom">
                 {messages.map((msg) => (
                     <MessageBubble key={msg.id} message={msg} />
                 ))}
@@ -29,6 +35,9 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
                         {status}...
                     </div>
                 )}
+
+                {/* Dummy div to scroll into */}
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Chat Input */}
