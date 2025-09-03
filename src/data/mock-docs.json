@@ -1,0 +1,16 @@
+[
+    {
+        "id": "d1",
+        "instrumentId": "i1",
+        "title": "NovaSeq Troubleshooting Guide",
+        "kind": "pdf",
+        "pages": 120
+    },
+    {
+        "id": "d2",
+        "instrumentId": "i1",
+        "title": "NovaSeq User Manual",
+        "kind": "docx",
+        "pages": 350
+    }
+]

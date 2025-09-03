@@ -1,0 +1,14 @@
+[
+    {
+        "id": "i1",
+        "projectId": "p1",
+        "name": "Illumina NovaSeq 6000",
+        "status": "active"
+    },
+    {
+        "id": "i2",
+        "projectId": "p1",
+        "name": "Agilent Bioanalyzer 2100",
+        "status": "maintenance"
+    }
+]
