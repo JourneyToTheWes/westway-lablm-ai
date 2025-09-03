@@ -19,6 +19,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const [selectedInstrumentIds, setSelectedInstrumentIds] = useState<
         string[]
     >([]);
+    const [isDragging, setIsDragging] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -49,17 +50,43 @@ const FileUpload: React.FC<FileUploadProps> = ({
     return (
         <div className="p-2 border rounded-md dark:border-gray-700">
             {/* File Picker */}
-            <label className="flex justify-center cursor-pointer py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-center text-sm">
-                Select Files
-                <input
-                    type="file"
-                    multiple
-                    accept=".pdf,.docx,.pptx,.txt"
-                    onChange={handleFileChange}
-                    className="hidden"
-                />
-            </label>
+            <div
+                onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragging(false);
+                    const droppedFiles = Array.from(e.dataTransfer.files);
+                    setFiles((prev) => [...prev, ...droppedFiles]);
+                }}
+            >
+                <label
+                    className={`flex flex-col items-center justify-center cursor-pointer py-4 px-2 border-2 border-dashed rounded text-center text-sm ${
+                        isDragging
+                            ? "border-gray-700 bg-gray-50 dark:border-gray-500 dark:bg-gray-700"
+                            : "border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
+                    }`}
+                >
+                    <span className="text-gray-700 dark:text-gray-200 mb-1">
+                        📁 Click or drag files here
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                        PDF, DOCX, PPTX, TXT
+                    </span>
+                    <input
+                        type="file"
+                        multiple
+                        accept=".pdf,.docx,.pptx,.txt"
+                        onChange={handleFileChange}
+                        className="hidden"
+                    />
+                </label>
+            </div>
 
+            {/* Associated instruments */}
             {instruments.length > 0 && (
                 <div className="my-2">
                     <p className="text-sm font-semibold">
@@ -84,12 +111,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </div>
             )}
 
+            {/* Selected Files */}
             {files.length > 0 && (
-                <ul className="border border-gray-300 dark:border-gray-700 rounded-md overflow-hidden">
+                <ul className="border border-gray-300 dark:border-gray-700 p-1 rounded-md overflow-hidden flex flex-col gap-1">
                     {files.map((file, idx) => (
                         <li
                             key={idx}
-                            className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-b last:border-b-0 flex justify-between items-center text-sm"
+                            className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 bg-gray-50 rounded-md dark:bg-gray-800 text-gray-900 dark:text-gray-100 last:border-b-0 flex justify-between items-center text-xs"
                             title={file.name} // Show full filename on hover
                         >
                             <span className="truncate">{file.name}</span>
