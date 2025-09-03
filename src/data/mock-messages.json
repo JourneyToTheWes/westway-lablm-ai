@@ -3,13 +3,30 @@
         "id": "m1",
         "chatId": "c1",
         "role": "user",
-        "content": "My centrifuge won’t start after calibration."
+        "content": "Why is the Protein Analyzer not powering on?",
+        "createdAt": "2025-09-01T10:05:00.000Z"
     },
     {
         "id": "m2",
         "chatId": "c1",
         "role": "assistant",
-        "content": "Please check if the power cable is securely connected and the lid is properly locked. [^1]",
-        "citations": [{ "docId": "d1", "page": 42 }]
+        "content": "Please check the power cable is securely connected and the lid is locked.",
+        "createdAt": "2025-09-01T10:05:30.000Z",
+        "citations": [{ "docId": "d1", "page": 12 }]
+    },
+    {
+        "id": "m3",
+        "chatId": "c2",
+        "role": "user",
+        "content": "The NanoScope camera feed is blank.",
+        "createdAt": "2025-09-01T11:05:00.000Z"
+    },
+    {
+        "id": "m4",
+        "chatId": "c2",
+        "role": "assistant",
+        "content": "Try restarting the imaging software and verify the USB connection.",
+        "createdAt": "2025-09-01T11:06:00.000Z",
+        "citations": [{ "docId": "d2", "page": 45 }]
     }
 ]

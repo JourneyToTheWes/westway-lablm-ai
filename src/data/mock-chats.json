@@ -2,8 +2,13 @@
     {
         "id": "c1",
         "projectId": "p1",
-        "instrumentId": "i1",
-        "title": "Centrifuge troubleshooting",
-        "createdAt": "2025-09-01T10:15:00Z"
+        "title": "Protein Analyzer Debugging",
+        "createdAt": "2025-09-01T10:00:00.000Z"
+    },
+    {
+        "id": "c2",
+        "projectId": "p2",
+        "title": "Microscope Troubleshooting",
+        "createdAt": "2025-09-01T11:00:00.000Z"
     }
 ]

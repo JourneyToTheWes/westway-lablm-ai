@@ -21,13 +21,14 @@ export async function POST(
 ) {
     try {
         const body = await req.json();
-        // Normally you would save to DB; for mocks, just echo back
-        const newMessage = {
+        const newMessage: Message = {
             id: `m${Date.now()}`,
             chatId: params.id,
             role: "user",
             content: body.content,
+            createdAt: new Date().toISOString(),
         };
+        // For mocks, just echo back the new message
         return Response.json(newMessage);
     } catch (error) {
         console.error(error);

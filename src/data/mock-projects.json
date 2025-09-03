@@ -1,4 +1,12 @@
 [
-    { "id": "p1", "name": "Genome Sequencer Project" },
-    { "id": "p2", "name": "Mass Spec Upgrade" }
+    {
+        "id": "p1",
+        "name": "Protein Analyzer Project",
+        "description": "Research project using Protein Analyzer 3000 for protein folding studies."
+    },
+    {
+        "id": "p2",
+        "name": "Microscopy Lab",
+        "description": "High-resolution imaging of cell samples with the NanoScope microscope."
+    }
 ]

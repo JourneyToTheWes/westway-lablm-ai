@@ -2,13 +2,13 @@
     {
         "id": "i1",
         "projectId": "p1",
-        "name": "Illumina NovaSeq 6000",
-        "status": "active"
+        "name": "Protein Analyzer 3000",
+        "model": "PA-3000"
     },
     {
         "id": "i2",
-        "projectId": "p1",
-        "name": "Agilent Bioanalyzer 2100",
-        "status": "maintenance"
+        "projectId": "p2",
+        "name": "NanoScope Microscope",
+        "model": "NS-500"
     }
 ]

@@ -2,15 +2,17 @@
     {
         "id": "d1",
         "instrumentId": "i1",
-        "title": "NovaSeq Troubleshooting Guide",
-        "kind": "pdf",
-        "pages": 120
+        "title": "Protein Analyzer Troubleshooting Manual",
+        "type": "pdf",
+        "path": "/docs/protein-analyzer-manual.pdf",
+        "pageCount": 120
     },
     {
         "id": "d2",
-        "instrumentId": "i1",
-        "title": "NovaSeq User Manual",
-        "kind": "docx",
-        "pages": 350
+        "instrumentId": "i2",
+        "title": "NanoScope User Guide",
+        "type": "docx",
+        "path": "/docs/nanoscope-guide.docx",
+        "pageCount": 80
     }
 ]

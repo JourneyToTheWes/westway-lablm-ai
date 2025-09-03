@@ -33,4 +33,8 @@ export interface Message {
     role: "user" | "assistant" | "system";
     content: string;
     createdAt: string;
+    citations?: Array<{
+        docId: string; // references Doc.id
+        page?: number; // optional, only for PDFs
+    }>;
 }
