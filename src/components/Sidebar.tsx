@@ -10,6 +10,7 @@ import {
 import { Project, Instrument, Doc, Chat } from "@/lib/types";
 import FileUpload from "./FileUpload";
 import GoogleDrivePicker from "./GoogleDrivePicker";
+import { useDocs } from "@/context/DocContext";
 
 type SidebarProps = {
     onSelectChat: (chatId: string) => void;
@@ -21,10 +22,11 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
         null
     );
     const [instruments, setInstruments] = useState<Instrument[]>([]);
-    const [docs, setDocs] = useState<Doc[]>([]);
+    // const [docs, setDocs] = useState<Doc[]>([]);
     const [chats, setChats] = useState<Chat[]>([]);
     const [uploadedDocs, setUploadedDocs] = useState<Doc[]>([]);
     const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+    const { docs, setDocs } = useDocs();
 
     // Fetch all data
     useEffect(() => {

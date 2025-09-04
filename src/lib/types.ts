@@ -29,14 +29,16 @@ export interface Chat {
     createdAt: string; // ISO date string
 }
 
+export interface Citation {
+    docId: string; // references Doc.id
+    page?: number; // optional, only for PDFs
+}
+
 export interface Message {
     id: string;
     chatId: string;
     role: "user" | "assistant" | "system";
     content: string;
     createdAt: string;
-    citations?: Array<{
-        docId: string; // references Doc.id
-        page?: number; // optional, only for PDFs
-    }>;
+    citations?: Citation[];
 }

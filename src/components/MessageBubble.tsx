@@ -1,6 +1,14 @@
-import { Message } from "@/lib/types";
+import { Message, Citation } from "@/lib/types";
 
-const MessageBubble = ({ message }: { message: Message }) => {
+interface MessageBubbleProps {
+    message: Message;
+    onCitationClick: (docId: Citation["docId"], page: Citation["page"]) => void;
+}
+
+const MessageBubble: React.FC<MessageBubbleProps> = ({
+    message,
+    onCitationClick,
+}) => {
     const isUser = message.role === "user";
 
     return (
@@ -20,12 +28,18 @@ const MessageBubble = ({ message }: { message: Message }) => {
                 {message.citations && (
                     <div className="mt-2 text-xs text-gray-600 dark:text-gray-300">
                         {message.citations.map((c, i) => (
-                            <span
+                            <button
                                 key={i}
                                 className="mr-2 px-2 py-1 bg-gray-300 dark:bg-gray-600 rounded"
+                                onClick={() => onCitationClick(c.docId, c.page)}
                             >
-                                📄 {c.docId} {c.page ? `(p.${c.page})` : ""}
-                            </span>
+                                <span
+                                // key={i}
+                                // className="mr-2 px-2 py-1 bg-gray-300 dark:bg-gray-600 rounded"
+                                >
+                                    📄 {c.docId} {c.page ? `(p.${c.page})` : ""}
+                                </span>
+                            </button>
                         ))}
                     </div>
                 )}

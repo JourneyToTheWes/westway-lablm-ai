@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { DocProvider } from "@/context/DocContext";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,17 +30,26 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                {children}
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <DocProvider>
+                        {children}
 
-                {/* Load Google API + Picker scripts */}
-                <Script
-                    src="https://accounts.google.com/gsi/client"
-                    strategy="afterInteractive"
-                />
-                <Script
-                    src="https://apis.google.com/js/api.js"
-                    strategy="afterInteractive"
-                />
+                        {/* Load Google API + Picker scripts */}
+                        <Script
+                            src="https://accounts.google.com/gsi/client"
+                            strategy="afterInteractive"
+                        />
+                        <Script
+                            src="https://apis.google.com/js/api.js"
+                            strategy="afterInteractive"
+                        />
+                    </DocProvider>
+                </ThemeProvider>
             </body>
         </html>
     );
