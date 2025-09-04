@@ -81,3 +81,40 @@ export async function uploadFiles(
         throw err;
     }
 }
+
+export async function importDriveFiles(
+    projectId: string,
+    files: { id: string; name: string; mimeType: string }[],
+    accessToken: string
+): Promise<Doc[]> {
+    try {
+        const res = await fetch("/api/google-drive/import", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`, // Include the token
+            },
+            body: JSON.stringify({
+                projectId,
+                fileIds: files.map((f) => f.id),
+            }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            const errorMessage = data.error || data.message || "Unknown error";
+            console.error(
+                `API Error: ${res.status} ${res.statusText} - ${errorMessage}`
+            );
+
+            throw new Error(`Failed to import files: ${errorMessage}`);
+        }
+
+        const importedDocs: Doc[] = data;
+        return importedDocs;
+    } catch (err) {
+        console.error("Drive import failed:", err);
+        throw err;
+    }
+}

@@ -9,6 +9,7 @@ import {
 } from "@/lib/api";
 import { Project, Instrument, Doc, Chat } from "@/lib/types";
 import FileUpload from "./FileUpload";
+import GoogleDrivePicker from "./GoogleDrivePicker";
 
 type SidebarProps = {
     onSelectChat: (chatId: string) => void;
@@ -151,7 +152,7 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
 
             {/* File Upload */}
             {selectedProjectId && (
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-2">
                     <h2 className="px-2 py-1 font-semibold text-sm border-b dark:border-gray-400 mb-2">
                         Document Upload
                     </h2>
@@ -160,6 +161,13 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                         projectId={selectedProjectId}
                         instruments={filteredInstruments}
                         onUpload={handleUpload}
+                    />
+
+                    <GoogleDrivePicker
+                        projectId={selectedProjectId}
+                        onImport={(newDocs) => {
+                            setDocs((prev) => [...prev, ...newDocs]); // update docs
+                        }}
                     />
                 </div>
             )}
