@@ -42,3 +42,10 @@ export interface Message {
     createdAt: string;
     citations?: Citation[];
 }
+
+// Google Drive MIME types
+export type SupportedMimeType =
+    | "application/pdf" // .pdf
+    | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+    | "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+    | "text/plain"; // .txt
