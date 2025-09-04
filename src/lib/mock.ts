@@ -16,9 +16,10 @@ export async function loadMock<T>(mockFile: string): Promise<T> {
  * Get in-memory docs array (lazy load from JSON)
  */
 export async function getMockDocs(): Promise<Doc[]> {
-    if (!mockDocsMemory) {
-        mockDocsMemory = await loadMock<Doc[]>("mock-docs.json");
-    }
+    if (mockDocsMemory) return mockDocsMemory;
+
+    const data = (await import("../data/mock-docs.json")).default as Doc[];
+    mockDocsMemory = [...data]; // copy original data
     return mockDocsMemory;
 }
 
@@ -27,5 +28,7 @@ export async function getMockDocs(): Promise<Doc[]> {
  */
 export async function addMockDocs(newDocs: Doc[]): Promise<void> {
     const docs = await getMockDocs();
-    docs.push(...newDocs);
+
+    // prevent duplicate docs on upload being added to mockDocsMemory
+    docs.push(...newDocs.filter((nd) => !docs.some((d) => d.id === nd.id)));
 }

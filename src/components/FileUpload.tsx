@@ -80,8 +80,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
     const handleUpload = async () => {
         try {
             for (const uf of uploadQueue.filter((f) => f.status === "queued")) {
-                uploadFile(uf);
+                await uploadFile(uf);
             }
+
+            // After successful upload, clear upload queue
+            setUploadQueue([]);
         } catch (err) {
             console.error("Upload failed:", err);
         }
