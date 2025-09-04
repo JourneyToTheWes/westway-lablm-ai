@@ -10,12 +10,17 @@ type FileUploadProps = {
     onUpload?: (docs: Doc[]) => void;
 };
 
+type UploadFile = {
+    file: File;
+    status: "queued" | "uploading" | "uploaded" | "indexed" | "error";
+};
+
 const FileUpload: React.FC<FileUploadProps> = ({
     projectId,
     instruments = [],
     onUpload,
 }) => {
-    const [files, setFiles] = useState<File[]>([]);
+    const [uploadQueue, setUploadQueue] = useState<UploadFile[]>([]);
     const [selectedInstrumentIds, setSelectedInstrumentIds] = useState<
         string[]
     >([]);
@@ -23,8 +28,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
-        const selectedFiles = Array.from(e.target.files);
-        setFiles(selectedFiles);
+        const newFiles: UploadFile[] = Array.from(e.target.files).map((f) => ({
+            file: f,
+            status: "queued",
+        }));
+        setUploadQueue((prev) => [...prev, ...newFiles]);
     };
 
     const handleInstrumentSelect = (id: string) => {
@@ -33,15 +41,47 @@ const FileUpload: React.FC<FileUploadProps> = ({
         );
     };
 
-    const handleUpload = async () => {
-        if (!files.length) return;
+    const removeFile = (idx: number) => {
+        setUploadQueue((prev) => prev.filter((_, i) => i !== idx));
+    };
 
+    const uploadFile = async (uf: UploadFile) => {
+        // Set uploading
+        setUploadQueue((prev) =>
+            prev.map((f) =>
+                f.file === uf.file ? { ...f, status: "uploading" } : f
+            )
+        );
+
+        // Mock upload delay
+        await new Promise((r) => setTimeout(r, 1000));
+
+        // Set uploaded
+        setUploadQueue((prev) =>
+            prev.map((f) =>
+                f.file === uf.file ? { ...f, status: "uploaded" } : f
+            )
+        );
+
+        // Mock indexing delay
+        await new Promise((r) => setTimeout(r, 500));
+
+        // Set indexed
+        setUploadQueue((prev) =>
+            prev.map((f) =>
+                f.file === uf.file ? { ...f, status: "indexed" } : f
+            )
+        );
+
+        const newDocs = await uploadFiles(projectId, [uf.file]);
+        if (onUpload) onUpload(newDocs);
+    };
+
+    const handleUpload = async () => {
         try {
-            const newDocs = await uploadFiles(projectId, files);
-            if (onUpload) onUpload(newDocs); // Update parent state
-            // Reset
-            setFiles([]);
-            setSelectedInstrumentIds([]);
+            for (const uf of uploadQueue.filter((f) => f.status === "queued")) {
+                uploadFile(uf);
+            }
         } catch (err) {
             console.error("Upload failed:", err);
         }
@@ -59,8 +99,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 onDrop={(e) => {
                     e.preventDefault();
                     setIsDragging(false);
-                    const droppedFiles = Array.from(e.dataTransfer.files);
-                    setFiles((prev) => [...prev, ...droppedFiles]);
+                    const droppedFiles: UploadFile[] = Array.from(
+                        e.dataTransfer.files
+                    ).map((f) => ({ file: f, status: "queued" }));
+                    setUploadQueue((prev) => [...prev, ...droppedFiles]);
                 }}
             >
                 <label
@@ -111,24 +153,35 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </div>
             )}
 
-            {/* Selected Files */}
-            {files.length > 0 && (
+            {/* Upload queue */}
+            {uploadQueue.length > 0 && (
                 <ul className="border border-gray-300 dark:border-gray-700 p-1 rounded-md overflow-hidden flex flex-col gap-1">
-                    {files.map((file, idx) => (
+                    {uploadQueue.map((uf, idx) => (
                         <li
                             key={idx}
                             className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 bg-gray-50 rounded-md dark:bg-gray-800 text-gray-900 dark:text-gray-100 last:border-b-0 flex justify-between items-center text-xs"
-                            title={file.name} // Show full filename on hover
+                            title={uf.file.name} // Show full filename on hover
                         >
-                            <span className="truncate">{file.name}</span>
+                            <span className="truncate">{uf.file.name}</span>
+                            <span
+                                className={`ml-2 text-xs ${
+                                    uf.status === "queued"
+                                        ? "text-gray-500"
+                                        : uf.status === "uploading"
+                                        ? "text-blue-500"
+                                        : uf.status === "uploaded"
+                                        ? "text-green-500"
+                                        : uf.status === "indexed"
+                                        ? "text-purple-500"
+                                        : "text-red-500"
+                                }`}
+                            >
+                                {uf.status}
+                            </span>
                             <button
                                 type="button"
                                 className="ml-2 text-gray-500 hover:text-gray-300 cursor-pointer"
-                                onClick={() =>
-                                    setFiles((prev) =>
-                                        prev.filter((_, i) => i !== idx)
-                                    )
-                                }
+                                onClick={() => removeFile(idx)}
                             >
                                 ✕
                             </button>
@@ -141,7 +194,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 <button
                     className="mt-2 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 cursor-pointer disabled:hover:bg-green-600 disabled:cursor-default disabled:opacity-50"
                     onClick={handleUpload}
-                    disabled={files.length === 0}
+                    disabled={uploadQueue.length === 0}
                 >
                     Upload
                 </button>
