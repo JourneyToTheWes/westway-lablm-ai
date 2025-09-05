@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { Doc } from "@/lib/types";
-import { getMockDocs, addMockDocs } from "@/lib/mock";
+import { addMockDocs } from "@/lib/mock";
 import path from "path";
 import { promises as fs } from "fs";
 
@@ -13,10 +13,11 @@ export async function POST(
         const { id: projectId } = await params;
 
         const formData = await req.formData();
-        const instrumentIdsRaw = formData.get("instrumentIds") as string | null;
-        const instrumentIds = instrumentIdsRaw
-            ? instrumentIdsRaw.split(",").map((id) => id.trim())
-            : [];
+        const instrumentIds = formData.getAll("instrumentIds") as
+            | string[]
+            | null;
+
+        console.log(instrumentIds);
         const files = formData.getAll("files") as File[];
 
         // Create newDocs to be added to in-memory doc storage
@@ -40,7 +41,7 @@ export async function POST(
             const newDoc: Doc = {
                 id: fileId,
                 projectId,
-                instrumentIds,
+                instrumentIds: instrumentIds ? instrumentIds : [],
                 title: file.name,
                 type: file.type as "pdf" | "docx" | "pptx" | "txt",
                 path: `/docs/${fileName}`,

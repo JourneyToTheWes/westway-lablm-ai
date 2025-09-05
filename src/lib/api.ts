@@ -59,11 +59,15 @@ export async function fetchMessages(chatId: string): Promise<Message[]> {
  */
 export async function uploadFiles(
     projectId: string,
+    instrumentIds: Instrument["id"][],
     files: File[]
 ): Promise<Doc[]> {
     try {
         const formData = new FormData();
         files.forEach((file) => formData.append("files", file));
+        instrumentIds.forEach((instId) =>
+            formData.append("instrumentIds", instId)
+        );
 
         const res = await fetch(`/api/projects/${projectId}/files`, {
             method: "POST",
@@ -84,6 +88,7 @@ export async function uploadFiles(
 
 export async function importDriveFiles(
     projectId: string,
+    instrumentIds: Instrument["id"][],
     files: { id: string; name: string; mimeType: string }[],
     accessToken: string
 ): Promise<Doc[]> {
@@ -96,6 +101,7 @@ export async function importDriveFiles(
             },
             body: JSON.stringify({
                 projectId,
+                instrumentIds,
                 fileIds: files.map((f) => f.id),
             }),
         });

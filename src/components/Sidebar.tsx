@@ -11,6 +11,7 @@ import { Project, Instrument, Doc, Chat } from "@/lib/types";
 import FileUpload from "./FileUpload";
 import GoogleDrivePicker from "./GoogleDrivePicker";
 import { useDocs } from "@/context/DocContext";
+import AssociatedInstruments from "./AssociatedInstruments";
 
 type SidebarProps = {
     onSelectChat: (chatId: string) => void;
@@ -27,12 +28,15 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
     const [uploadedDocs, setUploadedDocs] = useState<Doc[]>([]);
     const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
     const { docs, setDocs } = useDocs();
+    const [selectedInstrumentIds, setSelectedInstrumentIds] = useState<
+        string[]
+    >([]);
 
     // Fetch all data
     useEffect(() => {
         fetchProjects().then(setProjects).catch(console.error);
         fetchInstruments().then(setInstruments).catch(console.error);
-        fetchDocs().then(setDocs).catch(console.error);
+        // fetchDocs().then(setDocs).catch(console.error);
         fetchChats().then(setChats).catch(console.error);
     }, []);
 
@@ -158,19 +162,34 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                     <h2 className="px-2 py-1 font-semibold text-sm border-b dark:border-gray-400 mb-2">
                         Document Upload
                     </h2>
+                    <div className="flex flex-col">
+                        <AssociatedInstruments
+                            instruments={filteredInstruments}
+                            onInstrumentSelectionChange={
+                                setSelectedInstrumentIds
+                            }
+                        />
+                        <span className="px-2 text-xs text-gray-600 dark:text-gray-400 italic">
+                            Files uploaded (via local / Google Drive) will be
+                            associated with the selected instruments
+                        </span>
+                    </div>
 
-                    <FileUpload
-                        projectId={selectedProjectId}
-                        instruments={filteredInstruments}
-                        onUpload={handleUpload}
-                    />
-
-                    <GoogleDrivePicker
-                        projectId={selectedProjectId}
-                        onImport={(newDocs) => {
-                            setDocs((prev) => [...prev, ...newDocs]); // update docs
-                        }}
-                    />
+                    <div className="flex flex-col items-center gap-2">
+                        <FileUpload
+                            projectId={selectedProjectId}
+                            instrumentIds={selectedInstrumentIds}
+                            onUpload={handleUpload}
+                        />
+                        <hr className="border border-gray-500 w-5/10"></hr>
+                        <GoogleDrivePicker
+                            projectId={selectedProjectId}
+                            instrumentIds={selectedInstrumentIds}
+                            onImport={(newDocs) => {
+                                setDocs((prev) => [...prev, ...newDocs]); // update docs
+                            }}
+                        />
+                    </div>
                 </div>
             )}
 

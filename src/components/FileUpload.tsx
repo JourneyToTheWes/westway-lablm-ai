@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Doc } from "@/lib/types";
 import { uploadFiles } from "@/lib/api";
 
 type FileUploadProps = {
     projectId: string;
-    instruments?: { id: string; name: string }[];
+    instrumentIds: string[];
     onUpload?: (docs: Doc[]) => void;
 };
 
@@ -17,14 +17,17 @@ type UploadFile = {
 
 const FileUpload: React.FC<FileUploadProps> = ({
     projectId,
-    instruments = [],
+    instrumentIds = [],
     onUpload,
 }) => {
     const [uploadQueue, setUploadQueue] = useState<UploadFile[]>([]);
-    const [selectedInstrumentIds, setSelectedInstrumentIds] = useState<
-        string[]
-    >([]);
+    const [selectedInstrumentIds, setSelectedInstrumentIds] =
+        useState<string[]>(instrumentIds);
     const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        setSelectedInstrumentIds(instrumentIds);
+    }, [instrumentIds]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -33,12 +36,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
             status: "queued",
         }));
         setUploadQueue((prev) => [...prev, ...newFiles]);
-    };
-
-    const handleInstrumentSelect = (id: string) => {
-        setSelectedInstrumentIds((prev) =>
-            prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-        );
     };
 
     const removeFile = (idx: number) => {
@@ -73,7 +70,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
             )
         );
 
-        const newDocs = await uploadFiles(projectId, [uf.file]);
+        const newDocs = await uploadFiles(projectId, selectedInstrumentIds, [
+            uf.file,
+        ]);
         if (onUpload) onUpload(newDocs);
     };
 
@@ -131,77 +130,53 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </label>
             </div>
 
-            {/* Associated instruments */}
-            {instruments.length > 0 && (
-                <div className="my-2">
-                    <p className="text-sm font-semibold">
-                        Associate with instrument(s):
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-1 justify-center">
-                        {instruments.map((instr) => (
-                            <button
-                                key={instr.id}
-                                type="button"
-                                className={`px-2 py-1 border rounded text-sm cursor-pointer ${
-                                    selectedInstrumentIds.includes(instr.id)
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-100 dark:bg-gray-800"
-                                }`}
-                                onClick={() => handleInstrumentSelect(instr.id)}
-                            >
-                                {instr.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
             {/* Upload queue */}
             {uploadQueue.length > 0 && (
-                <ul className="border border-gray-300 dark:border-gray-700 p-1 rounded-md overflow-hidden flex flex-col gap-1">
-                    {uploadQueue.map((uf, idx) => (
-                        <li
-                            key={idx}
-                            className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 bg-gray-50 rounded-md dark:bg-gray-800 text-gray-900 dark:text-gray-100 last:border-b-0 flex justify-between items-center text-xs"
-                            title={uf.file.name} // Show full filename on hover
+                <>
+                    <ul className="border border-gray-300 dark:border-gray-700 p-1 rounded-md overflow-hidden flex flex-col gap-1">
+                        {uploadQueue.map((uf, idx) => (
+                            <li
+                                key={idx}
+                                className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 bg-gray-50 rounded-md dark:bg-gray-800 text-gray-900 dark:text-gray-100 last:border-b-0 flex justify-between items-center text-xs"
+                                title={uf.file.name} // Show full filename on hover
+                            >
+                                <span className="truncate">{uf.file.name}</span>
+                                <span
+                                    className={`ml-2 text-xs ${
+                                        uf.status === "queued"
+                                            ? "text-gray-500"
+                                            : uf.status === "uploading"
+                                            ? "text-blue-500"
+                                            : uf.status === "uploaded"
+                                            ? "text-green-500"
+                                            : uf.status === "indexed"
+                                            ? "text-purple-500"
+                                            : "text-red-500"
+                                    }`}
+                                >
+                                    {uf.status}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="ml-2 text-gray-500 hover:text-gray-300 cursor-pointer"
+                                    onClick={() => removeFile(idx)}
+                                >
+                                    ✕
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    <div className="flex justify-center mt-2">
+                        <button
+                            className="mt-2 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 cursor-pointer disabled:hover:bg-green-600 disabled:cursor-default disabled:opacity-50"
+                            onClick={handleUpload}
+                            disabled={uploadQueue.length === 0}
                         >
-                            <span className="truncate">{uf.file.name}</span>
-                            <span
-                                className={`ml-2 text-xs ${
-                                    uf.status === "queued"
-                                        ? "text-gray-500"
-                                        : uf.status === "uploading"
-                                        ? "text-blue-500"
-                                        : uf.status === "uploaded"
-                                        ? "text-green-500"
-                                        : uf.status === "indexed"
-                                        ? "text-purple-500"
-                                        : "text-red-500"
-                                }`}
-                            >
-                                {uf.status}
-                            </span>
-                            <button
-                                type="button"
-                                className="ml-2 text-gray-500 hover:text-gray-300 cursor-pointer"
-                                onClick={() => removeFile(idx)}
-                            >
-                                ✕
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                            Upload
+                        </button>
+                    </div>
+                </>
             )}
-
-            <div className="flex justify-center mt-2">
-                <button
-                    className="mt-2 px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 cursor-pointer disabled:hover:bg-green-600 disabled:cursor-default disabled:opacity-50"
-                    onClick={handleUpload}
-                    disabled={uploadQueue.length === 0}
-                >
-                    Upload
-                </button>
-            </div>
         </div>
     );
 };

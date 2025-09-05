@@ -29,11 +29,15 @@ function isSupportedMimeType(
 }
 
 export async function POST(req: NextRequest) {
+    console.log("in import api");
     const body = await req.json();
-    const { fileIds, projectId } = body as {
+    const { fileIds, instrumentIds, projectId } = body as {
         fileIds: string[];
+        instrumentIds: string[];
         projectId: string;
     };
+
+    console.log(instrumentIds);
 
     const authorizationHeader = (await headers()).get("Authorization");
     if (!authorizationHeader) {
