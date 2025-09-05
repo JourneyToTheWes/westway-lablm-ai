@@ -58,6 +58,7 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
         : [...chats];
 
     const handleUpload = (newDocs: Doc[]) => {
+        setDocs((prev) => [...prev, ...newDocs]);
         setUploadedDocs((prev) => [...prev, ...newDocs]);
     };
 

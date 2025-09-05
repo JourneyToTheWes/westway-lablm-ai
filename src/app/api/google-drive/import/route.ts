@@ -29,7 +29,6 @@ function isSupportedMimeType(
 }
 
 export async function POST(req: NextRequest) {
-    console.log("in import api");
     const body = await req.json();
     const { fileIds, instrumentIds, projectId } = body as {
         fileIds: string[];
@@ -102,7 +101,8 @@ export async function POST(req: NextRequest) {
             );
             const contentText = contentBuffer.toString("utf-8").slice(0, 1000);
             const newFileId = `gd-${data.id}`;
-            const fileName = `${newFileId}-${data.name}`;
+            // const fileName = `${newFileId}-${data.name}`;
+            const fileName = data.name ?? "";
             const savePath = path.join(uploadDir, fileName);
 
             // Save to /public/docs

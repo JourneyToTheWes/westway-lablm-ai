@@ -36,8 +36,18 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
                     <MessageBubble
                         key={msg.id}
                         message={msg}
-                        onCitationClick={(docId, page) => {
-                            const doc = docs.find((d) => d.id === docId) as Doc;
+                        onCitationClick={(docId, page, docTitle) => {
+                            console.log(docTitle);
+                            console.log(docs);
+                            console.log(docId);
+                            const doc = docs.find(
+                                (d) =>
+                                    d.id === docId ||
+                                    (docTitle && d.title.includes(docTitle))
+                            ) as Doc;
+
+                            console.log(docs);
+
                             setPreviewDoc(doc);
                             setPreviewPage(page ? page : null);
                         }}

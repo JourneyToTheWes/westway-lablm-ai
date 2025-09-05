@@ -2,7 +2,11 @@ import { Message, Citation } from "@/lib/types";
 
 interface MessageBubbleProps {
     message: Message;
-    onCitationClick: (docId: Citation["docId"], page: Citation["page"]) => void;
+    onCitationClick: (
+        docId: Citation["docId"],
+        page: Citation["page"],
+        docTitle?: Citation["docTitle"] // Temp variable for Document Viewing Demo
+    ) => void;
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -31,7 +35,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                             <button
                                 key={i}
                                 className="mr-2 px-2 py-1 bg-gray-300 dark:bg-gray-600 rounded"
-                                onClick={() => onCitationClick(c.docId, c.page)}
+                                onClick={() =>
+                                    onCitationClick(c.docId, c.page, c.docTitle)
+                                }
                             >
                                 <span
                                 // key={i}

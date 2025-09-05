@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { Doc } from "@/lib/types";
-import { addMockDocs } from "@/lib/mock";
+import { addMockDocs, getMockDocs } from "@/lib/mock";
 import path from "path";
 import { promises as fs } from "fs";
 
@@ -23,6 +23,8 @@ export async function POST(
         // Create newDocs to be added to in-memory doc storage
         const newDocs: Doc[] = [];
 
+        const docs = await getMockDocs();
+
         const uploadDir = path.join(process.cwd(), "public", "docs");
         await fs.mkdir(uploadDir, { recursive: true });
 
@@ -31,7 +33,8 @@ export async function POST(
             const buffer = Buffer.from(arrayBuffer);
 
             const fileId = uuidv4();
-            const fileName = `${fileId}-${file.name}`;
+            // const fileName = `${fileId}-${file.name}`;
+            const fileName = file.name;
             const savePath = path.join(uploadDir, fileName);
 
             // Save to /public/docs
@@ -53,7 +56,8 @@ export async function POST(
         }
 
         // Append to mocked data (in memory)
-        await addMockDocs(newDocs);
+        docs.push(...newDocs);
+        await addMockDocs(docs);
 
         return NextResponse.json(newDocs);
     } catch (err) {

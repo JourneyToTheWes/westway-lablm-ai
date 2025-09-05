@@ -20,6 +20,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     onClose,
 }) => {
     if (!doc) return null;
+    console.log(doc.path);
 
     return (
         <Dialog open={!!doc} onOpenChange={(open) => !open && onClose()}>
@@ -31,7 +32,11 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
                         <Viewer
                             // fileUrl={doc.path} // comment out when doc.path points to real document
-                            fileUrl={"docs/example-of-an-instrument-manual.pdf"} // Dummy Doc to preview
+                            fileUrl={
+                                doc.path
+                                    ? doc.path
+                                    : "docs/example-of-an-instrument-manual.pdf"
+                            } // Dummy Doc to preview
                             defaultScale={SpecialZoomLevel.PageFit}
                             initialPage={page ? page - 1 : 0}
                         />
@@ -39,10 +44,14 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 ) : (
                     <iframe
                         // src={doc.path} // comment out when doc.path points to real document
-                        src={`docs/example-of-an-instrument-manual.pdf#page=${
-                            // Dummy Doc to preview
-                            page ? page - 1 : 0
-                        }#zoom=100`}
+                        src={
+                            doc.path
+                                ? doc.path
+                                : `docs/example-of-an-instrument-manual.pdf#page=${
+                                      // Dummy Doc to preview
+                                      page ? page - 1 : 0
+                                  }#zoom=100`
+                        }
                         className="w-full h-full rounded border"
                     />
                 )}

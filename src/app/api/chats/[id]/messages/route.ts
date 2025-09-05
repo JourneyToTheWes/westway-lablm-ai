@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server";
-import { loadMock } from "@/lib/mock";
-import { Message } from "@/lib/types";
+import { getMockDocs, loadMock } from "@/lib/mock";
+import { Citation, Message } from "@/lib/types";
+import { promises as fs } from "fs";
+import path from "path";
+import { parseStack } from "next/dist/server/lib/parse-stack";
 
 export async function GET(
     _req: Request,
@@ -25,18 +28,63 @@ export async function POST(
     const encoder = new TextEncoder();
     const { text } = await req.json();
 
-    // Mock assistant response
-    const assistantMessage: Message = {
-        id: `msg-${Date.now()}`,
-        chatId,
-        role: "assistant",
-        content: `This is a mock response to "${text}". It includes citations.`,
-        createdAt: new Date().toISOString(),
-        citations: [
-            { docId: "doc-1", page: 12 },
-            { docId: "doc-2", page: 45 },
-        ],
-    };
+    let assistantMessage: Message;
+    // Message sent needs to contain "westway lablm ai demo" and should also contain part
+    // of the file title that you want the citation to be from
+    if (text.toLowerCase().includes("WestWay LabLM AI Demo:".toLowerCase())) {
+        // Second mock assistant response for linking up an public/docs/ file to citation
+        // for document previewing demo
+        const specialFileNameCheck = text.split(":")[1].trim();
+        const docs = await getMockDocs();
+        console.log(docs);
+
+        // const citations = docs
+        //     .filter((doc) => doc.title.includes(specialFileNameCheck))
+        //     .map((doc) => ({
+        //         docId: doc.id,
+        //         page: doc.pageCount
+        //             ? Math.floor(Math.random() * doc.pageCount) + 1
+        //             : 1,
+        //     }));
+
+        const docsDirectory = path.join(process.cwd(), "public", "docs");
+
+        const fileNames = await fs.readdir(docsDirectory);
+        const citations: Citation[] = fileNames
+            .filter((fileName) => fileName.includes(specialFileNameCheck))
+            .map((fileName) => {
+                const docTitle = fileName.split(".").slice(0, -1).join(".");
+                return {
+                    docId: "d10",
+                    page: 1,
+                    docTitle, // Doc in-memory doesn't persist across serverless functions so I need a mocked out way to access an uploaded file temporarily
+                };
+            });
+
+        console.log(citations);
+
+        assistantMessage = {
+            id: `msg-${Date.now()}`,
+            chatId,
+            role: "assistant",
+            content: `This is a "special" mock response to "${text}". It includes "real" citations 😊. Heck yeah!!! That's what I'm talking about!`,
+            createdAt: new Date().toISOString(),
+            citations,
+        };
+    } else {
+        // Mock assistant response
+        assistantMessage = {
+            id: `msg-${Date.now()}`,
+            chatId,
+            role: "assistant",
+            content: `This is a mock response to "${text}". It includes citations.`,
+            createdAt: new Date().toISOString(),
+            citations: [
+                { docId: "doc-1", page: 12 },
+                { docId: "doc-2", page: 45 },
+            ],
+        };
+    }
 
     const statusStages = ["Searching", "Thinking", "Drafting", "Generating"];
 
