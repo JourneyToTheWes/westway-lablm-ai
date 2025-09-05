@@ -33,8 +33,7 @@ export async function POST(
             const buffer = Buffer.from(arrayBuffer);
 
             const fileId = uuidv4();
-            // const fileName = `${fileId}-${file.name}`;
-            const fileName = file.name;
+            const fileName = `${fileId}-${file.name}`;
             const savePath = path.join(uploadDir, fileName);
 
             // Save to /public/docs

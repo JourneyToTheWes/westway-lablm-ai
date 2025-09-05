@@ -32,7 +32,6 @@ export interface Chat {
 export interface Citation {
     docId: string; // references Doc.id
     page?: number; // optional, only for PDFs
-    docTitle?: string; // TODO: Temp variable for demo special message (Remove later)
 }
 
 export interface Message {

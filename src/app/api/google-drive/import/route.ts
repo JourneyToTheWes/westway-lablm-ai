@@ -101,8 +101,7 @@ export async function POST(req: NextRequest) {
             );
             const contentText = contentBuffer.toString("utf-8").slice(0, 1000);
             const newFileId = `gd-${data.id}`;
-            // const fileName = `${newFileId}-${data.name}`;
-            const fileName = data.name ?? "";
+            const fileName = `${newFileId}-${data.name}`;
             const savePath = path.join(uploadDir, fileName);
 
             // Save to /public/docs
