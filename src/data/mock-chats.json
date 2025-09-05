@@ -2,12 +2,14 @@
     {
         "id": "c1",
         "projectId": "p1",
+        "instrumentIds": ["i1", "i2", "i3"],
         "title": "Protein Analyzer Debugging",
         "createdAt": "2025-09-01T10:00:00.000Z"
     },
     {
         "id": "c2",
         "projectId": "p2",
+        "instrumentIds": ["i2", "i3"],
         "title": "Microscope Troubleshooting",
         "createdAt": "2025-09-01T11:00:00.000Z"
     }

@@ -83,10 +83,7 @@ export async function POST(
             role: "assistant",
             content: response,
             createdAt: new Date().toISOString(),
-            citations: [
-                { docId: "doc-1", page: 12 },
-                { docId: "doc-2", page: 45 },
-            ],
+            citations: [{ docId: "d5", page: 12 }],
         };
     } else {
         // Mock assistant response
@@ -97,8 +94,8 @@ export async function POST(
             content: `This is a mock response to "${text}". It includes citations.`,
             createdAt: new Date().toISOString(),
             citations: [
-                { docId: "doc-1", page: 12 },
-                { docId: "doc-2", page: 45 },
+                { docId: "d1", page: 12 },
+                { docId: "d2", page: 45 },
             ],
         };
     }

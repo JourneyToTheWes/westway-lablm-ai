@@ -23,20 +23,21 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
         null
     );
     const [instruments, setInstruments] = useState<Instrument[]>([]);
-    // const [docs, setDocs] = useState<Doc[]>([]);
+    // const [docs, setDocs] = useState<Doc[]>([]); // Migrated to using React context provider
     const [chats, setChats] = useState<Chat[]>([]);
-    const [uploadedDocs, setUploadedDocs] = useState<Doc[]>([]);
     const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
     const { docs, setDocs } = useDocs();
-    const [selectedInstrumentIds, setSelectedInstrumentIds] = useState<
+    const [selectedDocInstrumentIds, setSelectedDocInstrumentIds] = useState<
         string[]
     >([]);
+    const [selectedInstrumentIdsFilter, setSelectedInstrumentIdsFilter] =
+        useState<string[]>([]);
 
-    // Fetch all data
+    // Fetch all data (TODO: can be swapped for some app-wide state management in the future)
     useEffect(() => {
         fetchProjects().then(setProjects).catch(console.error);
         fetchInstruments().then(setInstruments).catch(console.error);
-        // fetchDocs().then(setDocs).catch(console.error);
+        // fetchDocs().then(setDocs).catch(console.error); // Migrated to using React context provider
         fetchChats().then(setChats).catch(console.error);
     }, []);
 
@@ -45,13 +46,29 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
         ? instruments.filter((i) => i.projectIds.includes(selectedProjectId))
         : [...instruments];
 
-    const filteredDocs = selectedProjectId
-        ? docs
-              .filter((d) => d.projectId === selectedProjectId)
-              .concat(
-                  uploadedDocs.filter((d) => d.projectId === selectedProjectId)
-              )
-        : [...docs];
+    // Filter documents by selected project, or instruments, both, or none
+    let filteredDocs: Doc[] = [];
+    if (selectedProjectId && selectedInstrumentIdsFilter.length === 0) {
+        // Only project is selected
+        filteredDocs = docs.filter((d) => d.projectId === selectedProjectId);
+    } else if (!selectedProjectId && selectedInstrumentIdsFilter.length > 0) {
+        // only instruments are selected
+        filteredDocs = docs.filter((d) =>
+            selectedInstrumentIdsFilter.includes(d.projectId)
+        );
+    } else if (selectedProjectId && selectedInstrumentIdsFilter.length > 0) {
+        // Both project and instruments are selected
+        filteredDocs = docs
+            .filter((d) => d.projectId === selectedProjectId)
+            .filter((d) =>
+                selectedInstrumentIdsFilter.some((i) =>
+                    d.instrumentIds?.includes(i)
+                )
+            );
+    } else {
+        // None are selected so display all docs
+        filteredDocs = [...docs];
+    }
 
     const filteredChats = selectedProjectId
         ? chats.filter((c) => c.projectId === selectedProjectId)
@@ -59,12 +76,23 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
 
     const handleUpload = (newDocs: Doc[]) => {
         setDocs((prev) => [...prev, ...newDocs]);
-        setUploadedDocs((prev) => [...prev, ...newDocs]);
     };
 
     const handleChatSelect = (chatId: string) => {
         onSelectChat(chatId);
         setSelectedChatId(chatId);
+    };
+
+    const handleSelectedInstrumentIdsFilterChange = (id: string) => {
+        let instrumentIds: string[] = [];
+        setSelectedInstrumentIdsFilter((prev) => {
+            if (prev.includes(id)) {
+                instrumentIds = prev.filter((i) => i !== id);
+            } else {
+                instrumentIds = [...prev, id];
+            }
+            return instrumentIds;
+        });
     };
 
     return (
@@ -100,7 +128,11 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                                     ? "bg-gray-200 dark:bg-gray-700 font-semibold"
                                     : ""
                             }`}
-                            onClick={() => setSelectedProjectId(p.id)}
+                            onClick={() =>
+                                setSelectedProjectId((prev) =>
+                                    prev === p.id ? null : p.id
+                                )
+                            }
                         >
                             {p.name}
                         </li>
@@ -124,8 +156,21 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                 </div>
                 <ul className="flex-1 overflow-y-auto scrollbar-custom max-h-[250px]">
                     {filteredInstruments.map((i) => (
-                        <li key={i.id} className="px-4 py-2">
-                            {i.name} ({i.model})
+                        <li key={i.id} className="w-full">
+                            <button
+                                className={`px-4 py-1 w-full truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 ${
+                                    selectedInstrumentIdsFilter.includes(i.id)
+                                        ? "bg-gray-200 dark:bg-gray-700 font-semibold"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    handleSelectedInstrumentIdsFilterChange(
+                                        i.id
+                                    )
+                                }
+                            >
+                                {i.name} ({i.model})
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -177,7 +222,7 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                         <AssociatedInstruments
                             instruments={filteredInstruments}
                             onInstrumentSelectionChange={
-                                setSelectedInstrumentIds
+                                setSelectedDocInstrumentIds
                             }
                         />
                         <span className="px-2 text-xs text-gray-600 dark:text-gray-400 italic">
@@ -189,13 +234,13 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                     <div className="flex flex-col items-center gap-2">
                         <FileUpload
                             projectId={selectedProjectId}
-                            instrumentIds={selectedInstrumentIds}
+                            instrumentIds={selectedDocInstrumentIds}
                             onUpload={handleUpload}
                         />
                         <hr className="border border-gray-500 w-5/10"></hr>
                         <GoogleDrivePicker
                             projectId={selectedProjectId}
-                            instrumentIds={selectedInstrumentIds}
+                            instrumentIds={selectedDocInstrumentIds}
                             onImport={(newDocs) => {
                                 setDocs((prev) => [...prev, ...newDocs]); // update docs
                                 console.log(docs);

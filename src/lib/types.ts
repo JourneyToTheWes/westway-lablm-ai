@@ -25,6 +25,7 @@ export interface Doc {
 export interface Chat {
     id: string;
     projectId: string;
+    instrumentIds?: string[]; // Can be associated with instruments as well
     title: string;
     createdAt: string; // ISO date string
 }

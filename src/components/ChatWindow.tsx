@@ -8,6 +8,7 @@ import { useDocs } from "@/context/DocContext";
 import { Doc, Feedback, Message } from "@/lib/types";
 import DocumentPreview from "./DocumentPreview";
 import { giveMessageFeedback } from "@/lib/api";
+import { Toaster } from "./ui/sonner";
 
 const ChatWindow = ({ chatId }: { chatId: string }) => {
     const { messages, setMessages, sendMessage, status } =
@@ -34,11 +35,16 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
         messageId: string,
         feedback: Feedback
     ) => {
-        const updatedMessage: Message = await giveMessageFeedback(
+        const messageRes: Message = await giveMessageFeedback(
             chatId,
             messageId,
             feedback
-        );
+        ); // updatedMessage only gives back { feedback } if it's not a mock message (because of mock no storage solution)
+
+        // Reconstruct updatedMessage here because of reasoning above which will be temporary
+        const message = messages.find((m) => m.id === messageId);
+        const updatedMessage = { ...message, ...messageRes };
+
         setMessages((prev) =>
             prev.map((m) => (m.id === messageId ? { ...updatedMessage } : m))
         );
@@ -85,6 +91,8 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
 
             {/* Chat Input */}
             <ChatInput onSend={handleSend} disabled={loading} />
+
+            <Toaster position="bottom-right" />
         </div>
     );
 };

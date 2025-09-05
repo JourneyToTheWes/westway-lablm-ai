@@ -4,6 +4,7 @@ import { ThumbsUp, ThumbsDown } from "lucide-react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
+import { toast } from "sonner";
 
 interface MessageBubbleProps {
     message: Message;
@@ -31,6 +32,20 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         table: ({ node, ...props }) => (
             <table className="markdown-table" {...props} />
         ),
+    };
+
+    const submitFeedback = () => {
+        onGiveFeedback(message.id, {
+            rating,
+            comment,
+        });
+
+        // Close comment
+        setShowComment(false);
+
+        toast.success(
+            "Thank you for your feedback! We will continue to use your feedback to improve your experience."
+        );
     };
 
     return (
@@ -62,7 +77,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                                 {message.citations.map((c, i) => (
                                     <button
                                         key={i}
-                                        className="mr-2 px-2 py-1 bg-gray-300 dark:bg-gray-600 rounded"
+                                        className="mr-2 px-2 py-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded cursor-pointer"
                                         onClick={() =>
                                             onCitationClick(c.docId, c.page)
                                         }
@@ -77,75 +92,82 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                         )}
 
                         {/* feedback section */}
-                        <div className="flex flex-col items-end gap-2 mt-2 text-gray-500">
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => {
-                                        onGiveFeedback(message.id, {
-                                            rating: "up",
-                                        });
-                                        setRating((prev) =>
-                                            prev === "up" ? null : "up"
-                                        );
-                                    }}
-                                    className={`hover:text-gray-300 cursor-pointer ${
-                                        rating === "up" && "text-gray-300"
-                                    }`}
-                                >
-                                    <ThumbsUp size={16} />
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        onGiveFeedback(message.id, {
-                                            rating: "down",
-                                        });
-                                        setRating((prev) =>
-                                            prev === "down" ? null : "down"
-                                        );
-                                    }}
-                                    className={`hover:text-gray-300 cursor-pointer ${
-                                        rating === "down" && "text-gray-300"
-                                    }`}
-                                >
-                                    <ThumbsDown size={16} />
-                                </button>
-                            </div>
+                        {message.content && (
+                            <>
+                                <div className="flex flex-col items-end gap-2 mt-2 text-gray-500">
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => {
+                                                onGiveFeedback(message.id, {
+                                                    rating: "up",
+                                                });
+                                                setRating((prev) =>
+                                                    prev === "up" ? null : "up"
+                                                );
+                                            }}
+                                            className={`hover:text-gray-300 cursor-pointer ${
+                                                rating === "up" &&
+                                                "text-gray-300"
+                                            }`}
+                                        >
+                                            <ThumbsUp size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                onGiveFeedback(message.id, {
+                                                    rating: "down",
+                                                });
+                                                setRating((prev) =>
+                                                    prev === "down"
+                                                        ? null
+                                                        : "down"
+                                                );
+                                            }}
+                                            className={`hover:text-gray-300 cursor-pointer ${
+                                                rating === "down" &&
+                                                "text-gray-300"
+                                            }`}
+                                        >
+                                            <ThumbsDown size={16} />
+                                        </button>
+                                    </div>
 
-                            {rating && (
-                                <div>
-                                    <button
-                                        onClick={() =>
-                                            setShowComment((prev) => !prev)
-                                        }
-                                        className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 hover:dark:border-gray-500 bg-gray-50 rounded-md dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs cursor-pointer"
-                                    >
-                                        Leave feedback
-                                    </button>
+                                    {rating && (
+                                        <div>
+                                            <button
+                                                onClick={() =>
+                                                    setShowComment(
+                                                        (prev) => !prev
+                                                    )
+                                                }
+                                                className="px-2 py-0.5 border border-gray-300 dark:border-gray-700 hover:dark:border-gray-500 bg-gray-50 rounded-md dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs cursor-pointer"
+                                            >
+                                                Leave feedback
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </div>
 
-                        {rating && showComment && (
-                            <div className="mt-2 flex flex-col items-end">
-                                <textarea
-                                    placeholder="Leave feedback on assistant response..."
-                                    className="w-full border rounded-md p-1 text-sm"
-                                    value={comment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                />
-                                <button
-                                    onClick={() =>
-                                        onGiveFeedback(message.id, {
-                                            rating,
-                                            comment,
-                                        })
-                                    }
-                                    className="mt-1 px-2 py-1 rounded-md text-sm min-w-[70px] bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 cursor-pointer disabled:cursor-default disabled:hover:bg-blue-600"
-                                    disabled={comment.length === 0}
-                                >
-                                    Submit
-                                </button>
-                            </div>
+                                {rating && showComment && (
+                                    <div className="mt-2 flex flex-col items-end">
+                                        <textarea
+                                            placeholder="Leave feedback on assistant response..."
+                                            className="w-full border rounded-md p-1 text-sm"
+                                            value={comment}
+                                            onChange={(e) =>
+                                                setComment(e.target.value)
+                                            }
+                                        />
+                                        <button
+                                            onClick={submitFeedback}
+                                            className="mt-1 px-2 py-1 rounded-md text-sm min-w-[70px] bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 cursor-pointer disabled:cursor-default disabled:hover:bg-blue-600"
+                                            disabled={comment.length === 0}
+                                        >
+                                            Submit
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </>
                 )}

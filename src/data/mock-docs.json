@@ -14,7 +14,7 @@
         "projectId": "p1",
         "instrumentIds": ["i2"],
         "title": "NanoScope User Guide",
-        "type": "docx",
+        "type": "pdf",
         "path": "/docs/example-of-an-instrument-manual.pdf",
         "pageCount": 80,
         "content": "Full text content of the NanoScope guide for AI semantic search..."
@@ -32,7 +32,7 @@
     {
         "id": "d4",
         "projectId": "p2",
-        "instrumentIds": ["i3"],
+        "instrumentIds": ["i2"],
         "title": "NanoScope Calibration Guide",
         "type": "pdf",
         "path": "/docs/example-of-an-instrument-manual.pdf",

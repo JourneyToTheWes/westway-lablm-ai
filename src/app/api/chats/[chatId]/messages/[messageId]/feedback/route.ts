@@ -14,6 +14,7 @@ export async function POST(
         const messageToUpdate = messages.find(
             (m) => m.chatId === chatId && m.id === messageId
         );
+
         const newMessage = { ...messageToUpdate, feedback }; // Not actually persisting feedback yet just for mock response
         return Response.json(newMessage);
     } catch (error) {
