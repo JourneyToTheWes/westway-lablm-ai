@@ -1,16 +1,13 @@
 import { NextRequest } from "next/server";
 import { getMockDocs, loadMock } from "@/lib/mock";
-import { Citation, Message } from "@/lib/types";
-import { promises as fs } from "fs";
-import path from "path";
-import { parseStack } from "next/dist/server/lib/parse-stack";
+import { Message } from "@/lib/types";
 
 export async function GET(
     _req: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ chatId: string }> }
 ) {
     try {
-        const { id: chatId } = await params;
+        const { chatId } = await params;
         const messages = await loadMock<Message[]>("mock-messages.json");
         const filtered = messages.filter((m) => m.chatId === chatId);
         return Response.json(filtered);
@@ -22,9 +19,9 @@ export async function GET(
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ chatId: string }> }
 ) {
-    const { id: chatId } = await params;
+    const { chatId } = await params;
     const encoder = new TextEncoder();
     const { text } = await req.json();
 

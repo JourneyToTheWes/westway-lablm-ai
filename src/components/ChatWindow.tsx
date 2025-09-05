@@ -5,11 +5,13 @@ import MessageBubble from "./MessageBubble";
 import useChatMessages from "@/hooks/useChatMessages";
 import ChatInput from "./ChatInput";
 import { useDocs } from "@/context/DocContext";
-import { Doc } from "@/lib/types";
+import { Doc, Feedback, Message } from "@/lib/types";
 import DocumentPreview from "./DocumentPreview";
+import { giveMessageFeedback } from "@/lib/api";
 
 const ChatWindow = ({ chatId }: { chatId: string }) => {
-    const { messages, sendMessage, status } = useChatMessages(chatId);
+    const { messages, setMessages, sendMessage, status } =
+        useChatMessages(chatId);
     const [loading, setLoading] = useState(false);
     const [previewDoc, setPreviewDoc] = useState<Doc | null>(null);
     const [previewPage, setPreviewPage] = useState<number | null>(null);
@@ -28,6 +30,20 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, status]);
 
+    const handleGiveFeedback = async (
+        messageId: string,
+        feedback: Feedback
+    ) => {
+        const updatedMessage: Message = await giveMessageFeedback(
+            chatId,
+            messageId,
+            feedback
+        );
+        setMessages((prev) =>
+            prev.map((m) => (m.id === messageId ? { ...updatedMessage } : m))
+        );
+    };
+
     return (
         <div className="flex flex-col h-full">
             {/* Messages */}
@@ -42,6 +58,7 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
                             setPreviewDoc(doc);
                             setPreviewPage(page ? page : null);
                         }}
+                        onGiveFeedback={handleGiveFeedback}
                     />
                 ))}
 

@@ -1,4 +1,4 @@
-import { Project, Chat, Message, Instrument, Doc } from "@/lib/types";
+import { Project, Chat, Message, Instrument, Doc, Feedback } from "@/lib/types";
 
 /**
  * Helper to fetch and handle errors
@@ -121,6 +121,38 @@ export async function importDriveFiles(
         return importedDocs;
     } catch (err) {
         console.error("Drive import failed:", err);
+        throw err;
+    }
+}
+
+/**
+ * Uploads files for a project.
+ * Returns the new Doc objects created.
+ */
+export async function giveMessageFeedback(
+    chatId: string,
+    messageId: string,
+    feedback: Feedback
+): Promise<Message> {
+    try {
+        const res = await fetch(
+            `/api/chats/${chatId}/messages/${messageId}/feedback`,
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    feedback,
+                }),
+            }
+        );
+
+        if (!res.ok) {
+            throw new Error(`Failed to upload files: ${res.statusText}`);
+        }
+
+        const data: Message = await res.json();
+        return data;
+    } catch (err) {
+        console.error(err);
         throw err;
     }
 }

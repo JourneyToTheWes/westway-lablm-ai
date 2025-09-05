@@ -34,6 +34,11 @@ export interface Citation {
     page?: number; // optional, only for PDFs
 }
 
+export interface Feedback {
+    rating: "up" | "down" | null;
+    comment?: string;
+}
+
 export interface Message {
     id: string;
     chatId: string;
@@ -41,6 +46,7 @@ export interface Message {
     content: string;
     createdAt: string;
     citations?: Citation[];
+    feedback?: Feedback;
 }
 
 // Google Drive MIME types

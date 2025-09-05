@@ -111,7 +111,7 @@ const useChatMessages = (chatId: string) => {
         setStatus(null);
     }
 
-    return { messages, sendMessage, status };
+    return { messages, setMessages, sendMessage, status };
 };
 
 export default useChatMessages;
