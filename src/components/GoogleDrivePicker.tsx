@@ -136,14 +136,19 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
             .addView(view)
             .setOAuthToken(token!) // Use the token from the promise
             .setDeveloperKey(process.env.NEXT_PUBLIC_GOOGLE_API_KEY!)
-            .setCallback(async (data: PickerCallbackData) => {
+            .setCallback(async (data: google.picker.ResponseObject) => {
                 if (data.action === google.picker.Action.PICKED) {
-                    const files = data.docs.map((doc: PickerDoc) => ({
-                        id: doc.id,
-                        name: doc.name,
-                        mimeType: doc.mimeType,
-                        status: FileStatus.QUEUED,
-                    }));
+                    const files: FileQueueItem[] = data.docs
+                        ? data.docs.map(
+                              (doc) =>
+                                  ({
+                                      id: doc.id,
+                                      name: doc.name,
+                                      mimeType: doc.mimeType,
+                                      status: FileStatus.QUEUED,
+                                  } as FileQueueItem)
+                          )
+                        : [];
 
                     // Show status on upload
                     setImportQueue((prevQueue) => [...prevQueue, ...files]);
