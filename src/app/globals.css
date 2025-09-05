@@ -159,3 +159,44 @@ body {
         @apply bg-background text-foreground;
     }
 }
+
+/* Base styles for all headers */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    @apply font-sans font-bold leading-tight;
+}
+
+/* styles/markdown.css */
+
+/* Style for the table */
+.markdown-table {
+    @apply w-full my-3 border-collapse; /* This makes sure borders don't double up */
+}
+
+/* Style for the table header and data cells */
+.markdown-table th,
+.markdown-table td {
+    @apply border-b border-b-gray-500 p-2 text-left;
+}
+
+/* Optional: Make the header row background a different color */
+.markdown-table th {
+    @apply border-b border-b-gray-300;
+}
+
+/* Specific font sizes and spacing for each header in MessageBubble for markdown */
+.message-bubble h1 {
+    @apply text-xl mt-12 mb-4;
+}
+
+.message-bubble h2 {
+    @apply text-lg mt-8 mb-3;
+}
+
+.message-bubble h3 {
+    @apply text-base mt-6 mb-2;
+}

@@ -58,6 +58,8 @@ const useChatMessages = (chatId: string) => {
 
         let buffer = "";
 
+        let frame: number | null = null;
+
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -76,18 +78,25 @@ const useChatMessages = (chatId: string) => {
                     if (event.stage) {
                         setStatus(event.stage);
                     }
+
                     if (event.token) {
                         assistantMessage = {
                             ...assistantMessage,
                             content: assistantMessage.content + event.token,
                         };
-                        setMessages((prev) =>
-                            prev.map((m) =>
-                                m.id === assistantMessage.id
-                                    ? assistantMessage
-                                    : m
-                            )
-                        );
+
+                        if (!frame) {
+                            frame = requestAnimationFrame(() => {
+                                setMessages((prev) =>
+                                    prev.map((m) =>
+                                        m.id === assistantMessage.id
+                                            ? assistantMessage
+                                            : m
+                                    )
+                                );
+                                frame = null;
+                            });
+                        }
                     }
                     if (event.citations) {
                         assistantMessage = {

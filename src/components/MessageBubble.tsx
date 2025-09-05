@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Message, Citation, Feedback } from "@/lib/types";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
+import ReactMarkdown, { Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface MessageBubbleProps {
     message: Message;
@@ -23,9 +26,18 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 
     const isUser = message.role === "user";
 
+    // Define a custom component for the <table> element
+    const components: Components = {
+        table: ({ node, ...props }) => (
+            <table className="markdown-table" {...props} />
+        ),
+    };
+
     return (
         <div
-            className={`flex ${isUser ? "justify-end" : "justify-start"} mb-3`}
+            className={`message-bubble flex ${
+                isUser ? "justify-end" : "justify-start"
+            } mb-3`}
         >
             <div
                 className={`max-w-lg rounded-xl px-4 py-2 shadow 
@@ -35,7 +47,13 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                   : "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
           }`}
             >
-                <p>{message.content}</p>
+                <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
+                    components={components}
+                >
+                    {message.content}
+                </ReactMarkdown>
 
                 {!isUser && (
                     <>
