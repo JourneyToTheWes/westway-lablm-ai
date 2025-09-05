@@ -31,26 +31,23 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 {doc.type === "pdf" ? (
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
                         <Viewer
-                            // fileUrl={doc.path} // comment out when doc.path points to real document
-                            fileUrl={
-                                doc.path
-                                    ? doc.path
-                                    : "docs/example-of-an-instrument-manual.pdf"
-                            } // Dummy Doc to preview
+                            fileUrl={doc.path}
                             defaultScale={SpecialZoomLevel.PageFit}
                             initialPage={page ? page - 1 : 0}
                         />
                     </Worker>
                 ) : (
                     <iframe
-                        // src={doc.path} // comment out when doc.path points to real document
                         src={
-                            doc.path
-                                ? doc.path
-                                : `docs/example-of-an-instrument-manual.pdf#page=${
-                                      // Dummy Doc to preview
-                                      page ? page - 1 : 0
-                                  }#zoom=100`
+                            doc.type === "docx"
+                                ? `https://docs.google.com/viewer?url=${encodeURIComponent(
+                                      doc.path
+                                  )}&embedded=true`
+                                : doc.type === "pptx"
+                                ? `https://docs.google.com/labnol.org/viewer?url=${encodeURIComponent(
+                                      doc.path
+                                  )}&embedded=true`
+                                : doc.path
                         }
                         className="w-full h-full rounded border"
                     />

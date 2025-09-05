@@ -38,7 +38,11 @@ export async function POST(
         const docs = await getMockDocs();
 
         const citations = docs
-            .filter((doc) => doc.title.includes(specialFileNameCheck))
+            .filter((doc) =>
+                doc.title
+                    .toLowerCase()
+                    .includes(specialFileNameCheck.toLowerCase())
+            )
             .map((doc) => ({
                 docId: doc.id,
                 page: doc.pageCount

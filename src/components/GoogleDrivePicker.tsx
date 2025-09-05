@@ -299,7 +299,7 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
     }, [importQueue, isProcessing, accessToken]);
 
     return (
-        <div>
+        <div className="w-full flex flex-col">
             <button
                 onClick={openPicker}
                 className="inline-flex items-center flex-nowrap gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-150 cursor-pointer"
@@ -377,7 +377,7 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
                                                     FileStatus.ERROR && "Error"}
                                             </span>
                                             <button
-                                                className="text-base text-gray-500 hover:text-gray-200 cursor-pointer"
+                                                className="ml-2 text-gray-500 hover:text-gray-300 cursor-pointer"
                                                 onClick={() =>
                                                     setImportQueue((prev) =>
                                                         prev.filter(
@@ -387,7 +387,7 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
                                                     )
                                                 }
                                             >
-                                                x
+                                                ✕
                                             </button>
                                         </div>
                                         {(item.status ===

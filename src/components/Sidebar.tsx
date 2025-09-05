@@ -147,7 +147,17 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                 </div>
                 <ul className="flex-1 overflow-y-auto scrollbar-custom max-h-[250px]">
                     {filteredDocs.map((d) => (
-                        <li key={d.id} className="px-4 py-1 truncate">
+                        <li
+                            key={d.id}
+                            className="px-4 py-1 truncate"
+                            title={`${d.title} ${
+                                d.instrumentIds?.length
+                                    ? `(Instruments: ${d.instrumentIds.join(
+                                          ", "
+                                      )})`
+                                    : "(General)"
+                            }`}
+                        >
                             {d.title}{" "}
                             {d.instrumentIds?.length
                                 ? `(Instruments: ${d.instrumentIds.join(", ")})`
@@ -159,7 +169,7 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
 
             {/* File Upload */}
             {selectedProjectId && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mb-3">
                     <h2 className="px-2 py-1 font-semibold text-sm border-b dark:border-gray-400 mb-2">
                         Document Upload
                     </h2>
@@ -188,6 +198,7 @@ export default function Sidebar({ onSelectChat }: SidebarProps) {
                             instrumentIds={selectedInstrumentIds}
                             onImport={(newDocs) => {
                                 setDocs((prev) => [...prev, ...newDocs]); // update docs
+                                console.log(docs);
                             }}
                         />
                     </div>

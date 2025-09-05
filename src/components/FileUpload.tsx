@@ -90,7 +90,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     };
 
     return (
-        <div className="p-2 border rounded-md dark:border-gray-700">
+        <div className="p-2 border rounded-md dark:border-gray-700 w-full">
             {/* File Picker */}
             <div
                 onDragOver={(e) => {

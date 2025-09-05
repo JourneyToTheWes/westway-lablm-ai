@@ -5,8 +5,8 @@
         "instrumentIds": ["i1"],
         "title": "Protein Analyzer Troubleshooting Manual",
         "type": "pdf",
-        "path": "/docs/protein-analyzer-manual.pdf",
-        "pageCount": 120,
+        "path": "/docs/example-of-an-instrument-manual.pdf",
+        "pageCount": 89,
         "content": "Full text content of the Protein Analyzer manual for AI semantic search..."
     },
     {
@@ -15,7 +15,7 @@
         "instrumentIds": ["i2"],
         "title": "NanoScope User Guide",
         "type": "docx",
-        "path": "/docs/nanoscope-guide.docx",
+        "path": "/docs/example-of-an-instrument-manual.pdf",
         "pageCount": 80,
         "content": "Full text content of the NanoScope guide for AI semantic search..."
     },
@@ -25,7 +25,7 @@
         "instrumentIds": [],
         "title": "General Lab Safety Procedures",
         "type": "pdf",
-        "path": "/docs/lab-safety.pdf",
+        "path": "/docs/example-of-an-instrument-manual.pdf",
         "pageCount": 50,
         "content": "General lab safety instructions applicable to all instruments..."
     },
@@ -35,7 +35,7 @@
         "instrumentIds": ["i3"],
         "title": "NanoScope Calibration Guide",
         "type": "pdf",
-        "path": "/docs/nanoscope-calibration.pdf",
+        "path": "/docs/example-of-an-instrument-manual.pdf",
         "pageCount": 35,
         "content": "Instructions for calibrating the NanoScope microscope..."
     },
@@ -45,7 +45,7 @@
         "instrumentIds": [],
         "title": "Microscopy Lab General Procedures",
         "type": "pdf",
-        "path": "/docs/microscopy-lab-procedures.pdf",
+        "path": "/docs/example-of-an-instrument-manual.pdf",
         "pageCount": 25,
         "content": "General lab procedures and safety guidelines for the microscopy lab..."
     }

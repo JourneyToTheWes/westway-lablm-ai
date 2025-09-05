@@ -5,8 +5,7 @@ import { Doc, SupportedMimeType } from "@/lib/types";
 import path from "path";
 import { promises as fs } from "fs";
 import { getDocTypeFromMime } from "@/lib/utils";
-
-const importedDocs: Doc[] = [];
+import { addMockDocs, getMockDocs } from "@/lib/mock";
 
 /**
  * A type guard to check if a string is a supported MIME type.
@@ -65,7 +64,8 @@ export async function POST(req: NextRequest) {
         auth.setCredentials({ access_token: accessToken });
         const drive = google.drive({ version: "v3", auth });
 
-        const newDocs: Doc[] = [];
+        const importedDocs: Doc[] = [];
+        const docs = await getMockDocs();
 
         const uploadDir = path.join(process.cwd(), "public", "docs");
         await fs.mkdir(uploadDir, { recursive: true });
@@ -119,10 +119,12 @@ export async function POST(req: NextRequest) {
             };
 
             importedDocs.push(newDoc);
-            newDocs.push(newDoc);
         }
 
-        return NextResponse.json(newDocs);
+        // Add imported docs to in-memory docs storage
+        await addMockDocs(importedDocs);
+
+        return NextResponse.json(importedDocs);
     } catch (err) {
         console.error(err);
 
