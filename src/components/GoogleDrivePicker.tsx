@@ -165,6 +165,78 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
         picker.setVisible(true);
     };
 
+    const startUploadSimulation = async (
+        itemId: string,
+        initialProgress = 0,
+        targetProgress = 100,
+        intervalMs = 50
+    ) => {
+        return new Promise((resolve, reject) => {
+            let currentProgress = initialProgress;
+            let intervalId: NodeJS.Timeout | null = null;
+
+            const updateAndCheck = () => {
+                setImportQueue((prevQueue) => {
+                    const updatedQueue = prevQueue.map((item) => {
+                        if (item.id === itemId) {
+                            const newProgress = Math.min(
+                                currentProgress,
+                                targetProgress
+                            );
+
+                            // Update item state
+                            const updatedItem = {
+                                ...item,
+                                progress: newProgress,
+                                // Set status to indicate it's being processed
+                                status: FileStatus.UPLOADING,
+                            };
+
+                            // Check if simulation is done
+                            if (newProgress === targetProgress) {
+                                if (intervalId) {
+                                    clearInterval(intervalId);
+                                }
+                                // Resolve the promise with the final item state
+                                // This signals that the simulation is complete
+                                resolve(updatedItem);
+                            }
+                            return updatedItem;
+                        }
+                        return item; // Return other items as they are
+                    });
+                    return updatedQueue;
+                });
+                currentProgress++; // Increment for the next iteration
+            };
+
+            // Start the interval
+            // If starting at targetProgress, resolve immediately
+            if (currentProgress >= targetProgress) {
+                if (intervalId) clearInterval(intervalId);
+                setImportQueue((prevQueue) => {
+                    // Final state update for 100% or target
+                    const updatedQueue = prevQueue.map((item) => {
+                        if (item.id === itemId) {
+                            return {
+                                ...item,
+                                progress: targetProgress,
+                                status: FileStatus.UPLOADED,
+                            };
+                        }
+                        return item;
+                    });
+                    return updatedQueue;
+                });
+                resolve({
+                    status: FileStatus.UPLOADED,
+                }); // Resolve with final state
+            } else {
+                intervalId = setInterval(updateAndCheck, intervalMs);
+            }
+        });
+    };
+
     // --- File Processing Logic ---
     useEffect(() => {
         const processQueueItem = async (item: FileQueueItem) => {
@@ -195,18 +267,8 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
                 if (!processedFile)
                     throw new Error("Import function returned no results.");
 
-                // Update status to UPLOADED
-                setImportQueue((prevQueue) =>
-                    prevQueue.map((q) =>
-                        q.id === item.id
-                            ? {
-                                  ...q,
-                                  status: FileStatus.UPLOADED,
-                                  progress: 100,
-                              }
-                            : q
-                    )
-                );
+                // TODO: Swap with real upload progress
+                await startUploadSimulation(item.id, 0, 100, 25);
 
                 // Now, proceed to indexing
                 setImportQueue((prevQueue) =>
@@ -396,7 +458,7 @@ const GoogleDrivePicker: React.FC<GoogleDrivePickerProps> = ({
                                                 FileStatus.INDEXING) && (
                                             <Progress
                                                 value={item.progress}
-                                                className="w-32"
+                                                className="w-full"
                                             />
                                         )}
                                     </div>
