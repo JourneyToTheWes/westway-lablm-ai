@@ -4,7 +4,11 @@
 
 ## About
 
-This is an AI Chat UI designed to help lab scientists troubleshoot laboratory procedures and instruments in the context of multiple instruments/projects.
+[WestWay LabLM AI](https://westway-lablm-ai.vercel.app/) is an AI Chat UI designed to help lab scientists troubleshoot laboratory procedures and instruments in the context of multiple instruments/projects.
+
+## Demo
+
+🎥[Watch the demo](https://drive.google.com/file/d/1DCq5j30kgTWuYxOfNy5k2u590WH5EQBi/view?usp=drive_link)
 
 ## Setup
 
