@@ -14,7 +14,7 @@
 
 #### Local Development
 
-1. Create `.env.local` file within the root directory and add key-value pair (`NEXT_PUBLIC_GOOGLE_CLIENT_ID=<GOOGLE_CLIENT_ID`) and (`NEXT_PUBLIC_GOOGLE_API_KEY=<GOOGLE_API_KEY>`).
+1. Create `.env.local` file within the root directory and add these key-value pairs: (`NEXT_PUBLIC_GOOGLE_CLIENT_ID=<GOOGLE_CLIENT_ID>`), (`NEXT_PUBLIC_GOOGLE_API_KEY=<GOOGLE_API_KEY>`), and (`BLOB_READ_WRITE_TOKEN=<VERCEL_BLOB_READ_WRITE_TOKEN>`).
 2. Install dependencies: `npm install`.
 3. Startup live development: `npm run dev`
 4. Navigate to `http://localhost:3000` and start interacting with the app
