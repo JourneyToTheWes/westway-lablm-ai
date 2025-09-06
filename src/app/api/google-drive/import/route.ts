@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { google } from "googleapis";
 import { Doc, SupportedMimeType } from "@/lib/types";
-import path from "path";
-import { promises as fs } from "fs";
 import { getDocTypeFromMime } from "@/lib/utils";
-import { addMockDocs, getMockDocs } from "@/lib/mock";
+import { addMockDocs } from "@/lib/mock";
+import { put } from "@vercel/blob";
 
 /**
  * A type guard to check if a string is a supported MIME type.
@@ -35,8 +34,6 @@ export async function POST(req: NextRequest) {
         projectId: string;
     };
 
-    console.log(instrumentIds);
-
     const authorizationHeader = (await headers()).get("Authorization");
     if (!authorizationHeader) {
         return NextResponse.json(
@@ -65,10 +62,6 @@ export async function POST(req: NextRequest) {
         const drive = google.drive({ version: "v3", auth });
 
         const importedDocs: Doc[] = [];
-        const docs = await getMockDocs();
-
-        const uploadDir = path.join(process.cwd(), "public", "docs");
-        await fs.mkdir(uploadDir, { recursive: true });
 
         for (const fileId of fileIds) {
             const { data } = await drive.files.get({
@@ -102,19 +95,20 @@ export async function POST(req: NextRequest) {
             const contentText = contentBuffer.toString("utf-8").slice(0, 1000);
             const newFileId = `gd-${data.id}`;
             const fileName = `${newFileId}-${data.name}`;
-            const savePath = path.join(uploadDir, fileName);
 
-            // Save to /public/docs
-            await fs.writeFile(savePath, contentBuffer);
+            // Upload to Vercel Blob
+            const { url: savePath } = await put(fileName, contentBuffer, {
+                access: "public",
+            });
 
             // Creatae new Doc entry
             const newDoc: Doc = {
                 id: newFileId,
                 projectId,
-                instrumentIds: [],
+                instrumentIds,
                 title: data.name || "Untitled",
                 type: docType,
-                path: `/docs/${fileName}`,
+                path: savePath,
                 content: contentText,
             };
 
