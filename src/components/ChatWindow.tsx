@@ -53,7 +53,7 @@ const ChatWindow = ({ chatId }: { chatId: string }) => {
     return (
         <div className="flex flex-col h-full">
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-custom">
+            <div className="flex-1 overflow-y-auto p-8 space-y-2 scrollbar-custom flex flex-col gap-3">
                 {messages.map((msg) => (
                     <MessageBubble
                         key={msg.id}

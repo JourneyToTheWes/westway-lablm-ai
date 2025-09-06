@@ -55,7 +55,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             } mb-3`}
         >
             <div
-                className={`max-w-lg rounded-xl px-4 py-2 shadow 
+                className={`max-w-xl rounded-xl px-4 py-2 shadow 
           ${
               isUser
                   ? "bg-blue-500 text-white"

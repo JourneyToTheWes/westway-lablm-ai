@@ -5,8 +5,10 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Doc } from "@/lib/types";
-import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
+import { zoomPlugin } from "@react-pdf-viewer/zoom";
+import "@react-pdf-viewer/zoom/lib/styles/index.css";
 
 interface DocumentPreviewProps {
     doc: Doc | null;
@@ -20,7 +22,9 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
     onClose,
 }) => {
     if (!doc) return null;
-    console.log(doc.path);
+
+    const zoomPluginInstance = zoomPlugin();
+    const { ZoomInButton, ZoomOutButton, ZoomPopover } = zoomPluginInstance;
 
     return (
         <Dialog open={!!doc} onOpenChange={(open) => !open && onClose()}>
@@ -30,10 +34,15 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({
                 </DialogHeader>
                 {doc.type === "pdf" ? (
                     <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+                        <div className="flex justify-center items-center bg-gray-200 border-b border-gray-200 p-1">
+                            <ZoomOutButton />
+                            <ZoomPopover />
+                            <ZoomInButton />
+                        </div>
                         <Viewer
                             fileUrl={doc.path}
-                            defaultScale={SpecialZoomLevel.PageFit}
                             initialPage={page ? page - 1 : 0}
+                            plugins={[zoomPluginInstance]}
                         />
                     </Worker>
                 ) : (
